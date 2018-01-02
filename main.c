@@ -93,7 +93,7 @@ static void test_loop(void)
 static void main_loop(void)
 {
   zb_statusT zb_status;
-  uint32_t counter_s;
+  uint16_t counter_s;
 
   counter_s = 0;
 
@@ -139,21 +139,29 @@ static void main_loop(void)
     }
 
     //envoyer le status toutes les minutes trente à la station (heartbeat)
-    if (((counter_s % 90) == 0) &&
-        (zb_status == ZB_STATUS_JOINED))
+    if (zb_status == ZB_STATUS_JOINED)
     {
-      //send status
-      zb_handle_sendData();
+      if (counter_s == 0)
+      {
+        //send status
+        zb_handle_sendData();
+      }
+      else
+      {
+        if (counter_s >= 90)
+        {
+          counter_s = -1;
+        }
+      }
+      counter_s++;
     }
     else
     {
-      counter_s = -1;
+      counter_s = 0;
     }
 
     manageHeaterCommand();
-
     timer0_wait_1s();
-    counter_s++;
   }
 }
 
@@ -167,10 +175,10 @@ static void applyHeaterCommand(heaterOrder cmd, uint8_t id)
   zb_handle_setHeaterCommand(cmd, id);
 }
 
+static uint16_t confortCounter = 0;
+
 static void manageHeaterCommand(void)
 {
-  static uint8_t ecoCounter = 0;
-
   if (currentCommand != previousCommand)
   {
     switch (currentCommand)
@@ -181,13 +189,13 @@ static void manageHeaterCommand(void)
         break;
 
       case HEAT_CONFORT_M1:
-        //confort = pas de signal
-        heat_reset(HEAT_MINUS | HEAT_PLUS);
+        //confort minus 1 = full during 3s and nothing until 5min expires
+        heat_set(HEAT_MINUS | HEAT_PLUS);
         break;
 
       case HEAT_CONFORT_M2:
-        //confort = pas de signal
-        heat_reset(HEAT_MINUS | HEAT_PLUS);
+        //confort minus 2 = full during 7s and nothing until 5min expires
+        heat_set(HEAT_MINUS | HEAT_PLUS);
         break;
 
       case HEAT_ECO:
@@ -211,7 +219,47 @@ static void manageHeaterCommand(void)
         break;
     }
     previousCommand = currentCommand;
-    ecoCounter = 0;
+    confortCounter = 0;
+  }
+  else
+  {
+    switch (currentCommand)
+    {
+      case HEAT_CONFORT_M1:
+        if (confortCounter >= 3)
+        {
+          heat_reset(HEAT_MINUS | HEAT_PLUS);
+        }
+        else
+        {
+          heat_set(HEAT_MINUS | HEAT_PLUS);
+        }
+        break;
+
+      case HEAT_CONFORT_M2:
+        if (confortCounter >= 7)
+        {
+          heat_reset(HEAT_MINUS | HEAT_PLUS);
+        }
+        else
+        {
+          heat_set(HEAT_MINUS | HEAT_PLUS);
+        }
+        break;
+
+      default:
+        //do nothing so time evolution for another commands.
+        break;
+    }
+  }
+
+  if (confortCounter >= 300)
+  {
+    confortCounter = 0;
+  }
+  else
+  {
+    confortCounter++;
   }
 }
 

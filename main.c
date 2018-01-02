@@ -180,6 +180,16 @@ static void manageHeaterCommand(void)
         heat_reset(HEAT_MINUS | HEAT_PLUS);
         break;
 
+      case HEAT_CONFORT_M1:
+        //confort = pas de signal
+        heat_reset(HEAT_MINUS | HEAT_PLUS);
+        break;
+
+      case HEAT_CONFORT_M2:
+        //confort = pas de signal
+        heat_reset(HEAT_MINUS | HEAT_PLUS);
+        break;
+
       case HEAT_ECO:
         //eco = full alternance
         heat_set(HEAT_MINUS | HEAT_PLUS);

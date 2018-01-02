@@ -29,6 +29,8 @@ extern "C" {
 typedef enum
 {
   HEAT_CONFORT,
+  HEAT_CONFORT_M1,
+  HEAT_CONFORT_M2,
   HEAT_ECO,
   HEAT_HG,
   HEAT_STOP

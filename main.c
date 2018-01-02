@@ -7,6 +7,15 @@
 #include "uart.h"
 #include "zb_handle.h"
 #include "timer.h"
+#include "heatcmd.h"
+
+
+#define ZIGBEE_PAYLOAD_CMD_SIZE         (20)
+static uint8_t zigbee_command_payload[ZIGBEE_PAYLOAD_CMD_SIZE];
+static BOOL decode_zb_payload(uint8_t* buffer, uint8_t size, heaterOrder* cmd);
+static void applyHeaterCommand(heaterOrder cmd, uint8_t id);
+static void manageHeaterCommand(void);
+
 
 static void main_loop(void);
 //static void test_loop(void);
@@ -58,7 +67,7 @@ void main(void)
   leds_glitch(LED_GREEN);
 
   //xbee wait API modem status frame associated and display green led.
-  zb_handle_setHeaterCommand(HEAT_STOP, 0);
+  applyHeaterCommand(HEAT_STOP, 0);
 
   main_loop();
 
@@ -80,10 +89,6 @@ static void test_loop(void)
   }
 }
 */
-
-#define ZIGBEE_PAYLOAD_CMD_SIZE         (20)
-static uint8_t zigbee_command_payload[ZIGBEE_PAYLOAD_CMD_SIZE];
-static BOOL decode_zb_payload(uint8_t* buffer, uint8_t size, uint8_t* cmd);
 
 static void main_loop(void)
 {
@@ -116,7 +121,7 @@ static void main_loop(void)
     if (zb_status == ZB_STATUS_JOINED)
     {
       uint8_t receivedSize;
-      uint8_t cmd;
+      heaterOrder cmd;
       receivedSize = zb_handle_getLastReceivedPayloadSize();
       if (receivedSize != 0)
       {
@@ -126,7 +131,7 @@ static void main_loop(void)
         if (decode_zb_payload(zigbee_command_payload, receivedSize, &cmd) == TRUE)
         {
           leds_glitch(LED_YELLOW);
-          zb_handle_setHeaterCommand(cmd, 0);
+          applyHeaterCommand(cmd, 0);
           zb_handle_sendData();
         }
         zb_handle_resetPayloadSize();
@@ -140,13 +145,67 @@ static void main_loop(void)
       //send status
       zb_handle_sendData();
     }
+    else
+    {
+      counter_s = -1;
+    }
+
+    manageHeaterCommand();
 
     timer0_wait_1s();
     counter_s++;
   }
 }
 
-static BOOL decode_zb_payload(uint8_t* buffer, uint8_t size, uint8_t* cmd)
+heaterOrder currentCommand;
+heaterOrder previousCommand = -1; //intialize with invalid value
+
+
+static void applyHeaterCommand(heaterOrder cmd, uint8_t id)
+{
+  currentCommand = cmd;
+  zb_handle_setHeaterCommand(cmd, id);
+}
+
+static void manageHeaterCommand(void)
+{
+  static uint8_t ecoCounter = 0;
+
+  if (currentCommand != previousCommand)
+  {
+    switch (currentCommand)
+    {
+      case HEAT_CONFORT:
+        //confort = pas de signal
+        heat_reset(HEAT_MINUS | HEAT_PLUS);
+        break;
+
+      case HEAT_ECO:
+        //eco = full alternance
+        heat_set(HEAT_MINUS | HEAT_PLUS);
+        break;
+
+      case HEAT_HG:
+        //hg = 1/2 alternance negative
+        heat_reset(HEAT_PLUS);
+        heat_set(HEAT_MINUS);
+        break;
+
+      case HEAT_STOP:
+        //arret = 1/2 alternance positive
+        heat_set(HEAT_PLUS);
+        heat_reset(HEAT_MINUS);
+        break;
+
+      default:
+        break;
+    }
+    previousCommand = currentCommand;
+    ecoCounter = 0;
+  }
+}
+
+static BOOL decode_zb_payload(uint8_t* buffer, uint8_t size, heaterOrder* cmd)
 {
   BOOL rc;
   rc = FALSE;
@@ -160,7 +219,7 @@ static BOOL decode_zb_payload(uint8_t* buffer, uint8_t size, uint8_t* cmd)
   {
     if ((buffer[0] != 0x00) || //DB protocol
         (buffer[2] != 0x01) || //1 actionneur
-        (buffer[3] != 0x81) || //command de chauffage
+        (buffer[3] != 0x81) || //commande de chauffage
         (buffer[5] != 0x00) )  //id = 0
     {
       rc = FALSE;

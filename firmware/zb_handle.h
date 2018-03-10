@@ -16,12 +16,12 @@
 extern "C" {
 #endif
 
-//RB0 = _RESET
-//RB1 = SLEEP_RQ
-#define XBEE_RESET_OFF()  (LATBbits.LATB0 = 1)
-#define XBEE_RESET_ON()   (LATBbits.LATB0 = 0)
-#define XBEE_SLEEP_RQ()   (LATBbits.LATB1 = 1)
-#define XBEE_WAKE_UP()    (LATBbits.LATB1 = 0)
+//RB1 = _RESET
+//RB0 = SLEEP_RQ
+#define XBEE_RESET_OFF()  (LATBbits.LATB1 = 1)
+#define XBEE_RESET_ON()   (LATBbits.LATB1 = 0)
+#define XBEE_SLEEP_RQ()   (LATBbits.LATB0 = 1)
+#define XBEE_WAKE_UP()    (LATBbits.LATB0 = 0)
 
 typedef enum
 {

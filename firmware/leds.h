@@ -15,13 +15,13 @@
 extern "C" {
 #endif
 
-#define     LED_YELLOW      (0x01)
-#define     LED_RED         (0x02)
-#define     LED_GREEN       (0x04)
+#define     LED_YELLOW      (0x04)
+#define     LED_RED         (0x08)
+#define     LED_GREEN       (0x10)
 
 
-#define     leds_set(leds)   LATD |= leds;
-#define     leds_reset(leds) LATD &= ~(leds);
+#define     leds_set(leds)   LATA |= leds;
+#define     leds_reset(leds) LATA &= ~(leds);
 
 extern void leds_glitch(uint8_t leds);
 

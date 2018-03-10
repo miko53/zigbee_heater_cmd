@@ -1,18 +1,15 @@
-/*
+/* 
  * File:   config.h
  * Author: mickael
  *
- * Created on 10 décembre 2017, 16:47
+ * Created on 10 mars 2018, 17:04
  */
 
 #ifndef CONFIG_H
 #define	CONFIG_H
 
-#ifdef	__cplusplus
-extern "C" {
-#endif
 
-// PIC18F4520 Configuration Bit Settings
+// PIC18F2420 Configuration Bit Settings
 
 // 'C' source line config statements
 
@@ -45,13 +42,10 @@ extern "C" {
 #pragma config STVREN = ON      // Stack Full/Underflow Reset Enable bit (Stack full/underflow will cause Reset)
 #pragma config LVP = OFF        // Single-Supply ICSP Enable bit (Single-Supply ICSP disabled)
 #pragma config XINST = OFF      // Extended Instruction Set Enable bit (Instruction set extension and Indexed Addressing mode disabled (Legacy mode))
-#pragma config DEBUG = ON         //debug pin on RB6 & RB7
 
 // CONFIG5L
 #pragma config CP0 = OFF        // Code Protection bit (Block 0 (000800-001FFFh) not code-protected)
 #pragma config CP1 = OFF        // Code Protection bit (Block 1 (002000-003FFFh) not code-protected)
-#pragma config CP2 = OFF        // Code Protection bit (Block 2 (004000-005FFFh) not code-protected)
-#pragma config CP3 = OFF        // Code Protection bit (Block 3 (006000-007FFFh) not code-protected)
 
 // CONFIG5H
 #pragma config CPB = OFF        // Boot Block Code Protection bit (Boot block (000000-0007FFh) not code-protected)
@@ -60,8 +54,6 @@ extern "C" {
 // CONFIG6L
 #pragma config WRT0 = OFF       // Write Protection bit (Block 0 (000800-001FFFh) not write-protected)
 #pragma config WRT1 = OFF       // Write Protection bit (Block 1 (002000-003FFFh) not write-protected)
-#pragma config WRT2 = OFF       // Write Protection bit (Block 2 (004000-005FFFh) not write-protected)
-#pragma config WRT3 = OFF       // Write Protection bit (Block 3 (006000-007FFFh) not write-protected)
 
 // CONFIG6H
 #pragma config WRTC = OFF       // Configuration Register Write Protection bit (Configuration registers (300000-3000FFh) not write-protected)
@@ -71,16 +63,10 @@ extern "C" {
 // CONFIG7L
 #pragma config EBTR0 = OFF      // Table Read Protection bit (Block 0 (000800-001FFFh) not protected from table reads executed in other blocks)
 #pragma config EBTR1 = OFF      // Table Read Protection bit (Block 1 (002000-003FFFh) not protected from table reads executed in other blocks)
-#pragma config EBTR2 = OFF      // Table Read Protection bit (Block 2 (004000-005FFFh) not protected from table reads executed in other blocks)
-#pragma config EBTR3 = OFF      // Table Read Protection bit (Block 3 (006000-007FFFh) not protected from table reads executed in other blocks)
 
 // CONFIG7H
 #pragma config EBTRB = OFF      // Boot Block Table Read Protection bit (Boot block (000000-0007FFh) not protected from table reads executed in other blocks)
 
-
-#ifdef	__cplusplus
-}
-#endif
 
 #endif	/* CONFIG_H */
 

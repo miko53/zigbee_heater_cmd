@@ -42,20 +42,21 @@ void main(void)
   //set up internal clock to 8MHz
   OSCCON  = 0x70;
 
-  //configure PORT D in output for led display
-  PORTD = 0x0;
-  TRISD = 0x0;
+  //configure PORT A in output for led display
+  PORTA = 0x0;
+  TRISA = 0x0;
 
   //put RB0 and RB1 in output
-  //put RB2 also in output
-  //RB0 = _RESET
-  //RB1 = SLEEP_RQ
-  //RB2 = BATT_SENSOR_ENABLED  ===> not present for cmd
+  //RB1 = _RESET
+  //RB0 = SLEEP_RQ
   LATB = 0x00;
-  TRISB = 0xF8;
+  TRISB = 0xFC;
+
+  //heater on RC0 and RC1
+  LATC = 0x00;
+  TRISC = 0xFC;
 
   uart_setup();
-
 
   INTCONbits.PEIE = 1; //activate peripherical interrupt
   INTCONbits.GIE = 1; //activate global interrupt
@@ -68,9 +69,9 @@ void main(void)
 
   //xbee wait API modem status frame associated and display green led.
   applyHeaterCommand(HEAT_STOP, 0);
+  manageHeaterCommand();
 
   main_loop();
-
   //test_loop();
 }
 

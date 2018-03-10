@@ -15,11 +15,11 @@
 extern "C" {
 #endif
 
-#define     HEAT_MINUS      (0x08)
-#define     HEAT_PLUS       (0x10)
+#define     HEAT_MINUS      (0x02)
+#define     HEAT_PLUS       (0x01)
 
-#define     heat_set(heatcmd)   LATD |= heatcmd;
-#define     heat_reset(heatcmd) LATD &= ~(heatcmd);
+#define     heat_set(heatcmd)   LATC |= heatcmd;
+#define     heat_reset(heatcmd) LATC &= ~(heatcmd);
 
 #endif	/* HEATCMD_H */
 

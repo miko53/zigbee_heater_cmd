@@ -14,7 +14,7 @@ extern "C" {
 
 #include <xc.h>
 
-extern BOOL timer0_interupt_done;
+extern volatile BOOL timer0_interupt_done;
 
 #ifdef	__cplusplus
 }

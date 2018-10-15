@@ -18,9 +18,9 @@ static void manageHeaterCommand(void);
 
 
 static void main_loop(void);
-//static void test_loop(void);
+static void test_loop(void);
 
-/*
+
 static void delay_s(uint8_t s)
 {
     uint8_t loop;
@@ -33,7 +33,7 @@ static void delay_s(uint8_t s)
         }
     }
 }
-*/
+
 
 void main(void)
 {
@@ -57,7 +57,6 @@ void main(void)
   TRISC = 0xFC;
 
   uart_setup();
-
   INTCONbits.PEIE = 1; //activate peripherical interrupt
   INTCONbits.GIE = 1; //activate global interrupt
 
@@ -65,31 +64,43 @@ void main(void)
   XBEE_RESET_ON();
   XBEE_RESET_OFF();
 
-  leds_glitch(LED_GREEN);
+  leds_glitch(LED_RED);
 
-  //xbee wait API modem status frame associated and display green led.
+
   applyHeaterCommand(HEAT_STOP, 0);
   manageHeaterCommand();
 
   main_loop();
-  //test_loop();
+  test_loop();
+
+  /*   while (1)
+     {
+         LATA |= (LED_YELLOW);
+         for(int i = 0; i < 1000; i++) NOP();
+         LATA |= (LED_RED);
+         for(int i = 0; i < 1000; i++) NOP();
+         LATA |= (LED_GREEN);
+         for(int i = 0; i < 1000; i++) NOP();
+         LATA &= ~(LED_YELLOW | LED_RED | LED_GREEN);
+         for(int i = 0; i < 1000; i++) NOP();
+     }*/
 }
 
-/*
+
 static void test_loop(void)
 {
   //test_loop
   while (1)
   {
-      leds_set(LED_GREEN|LED_RED|LED_YELLOW);
-      timer0_wait_1s();
-      //delay_s(1);
-      leds_reset(LED_GREEN|LED_RED|LED_YELLOW);
-      timer0_wait_1s();
-      //delay_s(1);
+      leds_set(LED_GREEN|LED_RED);
+     // timer0_wait_1s();
+      delay_s(1);
+      leds_reset(LED_GREEN|LED_RED);
+      //timer0_wait_1s();
+      delay_s(1);
   }
 }
-*/
+
 
 static void main_loop(void)
 {

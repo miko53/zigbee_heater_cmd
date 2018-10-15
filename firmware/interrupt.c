@@ -15,7 +15,7 @@ uint8_t UART_writeIndex = 0;
 //extern uint8_t nbCharRecu;
 
 void interrupt high_priority isr_hi(void)
-{
+{    
   //IT I2C
   if (PIE1bits.SSPIE & PIR1bits.SSPIF)
   {
@@ -70,7 +70,7 @@ void interrupt high_priority isr_hi(void)
       UART_errorStatus.framingError++;
       //LATD |= 0x02;
       dummy = RCREG;
-      RESET(); //will perform a recalibration and should remove frame error
+      //RESET(); //will perform a recalibration and should remove frame error
     }
     else if (RCSTAbits.OERR)
     {

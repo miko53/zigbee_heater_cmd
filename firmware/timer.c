@@ -3,7 +3,7 @@
 #include "timer_loc.h"
 #include "global.h"
 
-BOOL timer0_interupt_done;
+volatile BOOL timer0_interupt_done;
 
 static void timer0_wait_ready(void);
 

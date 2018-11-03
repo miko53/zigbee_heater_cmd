@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   heatcmd.h
  * Author: mickael
  *

@@ -15,7 +15,7 @@ uint8_t UART_writeIndex = 0;
 //extern uint8_t nbCharRecu;
 
 void interrupt high_priority isr_hi(void)
-{    
+{
   //IT I2C
   if (PIE1bits.SSPIE & PIR1bits.SSPIF)
   {
